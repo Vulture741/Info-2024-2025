@@ -4,6 +4,7 @@ import Home from '../views/Home.vue';
 import Management from '../views/Management.vue';
 import Edit from '../views/Edit.vue';
 import Article from '../views/Article.vue';
+import Register from '../views/Register.vue'
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -12,6 +13,10 @@ const routes = [
   { path: '/management', name: 'Management', component: Management },
   { path: '/edit/:id', name: 'Edit', component: Edit },
   { path: '/article/:id', name: 'Article', component: Article },
+  {
+    path: '/register',
+    component: Register
+  }
 ];
 
 const router = createRouter({

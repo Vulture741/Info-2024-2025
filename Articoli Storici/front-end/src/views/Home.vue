@@ -1,5 +1,15 @@
 <template>
   <div class="container">
+    <div class="tag-filters">
+      <span 
+        v-for="tag in availableTags" 
+        :key="tag"
+        :class="['filter-tag', { active: selectedTags.includes(tag) }]"
+        @click="toggleTag(tag)"
+      >
+        {{ tag }}
+      </span>
+    </div>
     <div class="grid">
       <ArticleCard v-for="a in filteredArticles" :key="a.id" :article="a" />
     </div>
@@ -12,16 +22,30 @@ import { searchQuery } from '../composables/useAuth';
 import ArticleCard from '../components/ArticleCard.vue';
 
 const articles = ref([]);
+const selectedTags = ref([]);
+const availableTags = ['WW2', 'Historical Figure', 'Event'];
 
 async function loadArticles() {
   const res = await fetch('http://localhost/backend-app/api/articles.php');
   articles.value = await res.json();
 }
 
+function toggleTag(tag) {
+  const index = selectedTags.value.indexOf(tag);
+  if (index === -1) {
+    selectedTags.value.push(tag);
+  } else {
+    selectedTags.value.splice(index, 1);
+  }
+}
+
 const filteredArticles = computed(() => {
-  return articles.value.filter(a =>
-    a.title.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
+  return articles.value.filter(a => {
+    const matchesSearch = a.title.toLowerCase().includes(searchQuery.value.toLowerCase());
+    const matchesTags = selectedTags.value.length === 0 || 
+      (a.tags && a.tags.some(tag => selectedTags.value.includes(tag)));
+    return matchesSearch && matchesTags;
+  });
 });
 
 onMounted(loadArticles);
@@ -63,6 +87,31 @@ onMounted(loadArticles);
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
+}
+
+.tag-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.filter-tag {
+  background-color: #f0f2f2;
+  color: #232f3e;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-tag:hover {
+  background-color: #e3e6e6;
+}
+
+.filter-tag.active {
+  background-color: #232f3e;
+  color: white;
 }
 </style>
 

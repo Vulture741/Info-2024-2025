@@ -11,6 +11,18 @@
           <input v-model="title" placeholder="Titolo" required />
           <input v-model="image_url" placeholder="URL Immagine" />
           <textarea v-model="content" placeholder="Contenuto" required></textarea>
+          <div class="tags-input">
+            <div class="available-tags">
+              <span 
+                v-for="tag in availableTags" 
+                :key="tag"
+                :class="['tag', { selected: selectedTags.includes(tag) }]"
+                @click="toggleTag(tag)"
+              >
+                {{ tag }}
+              </span>
+            </div>
+          </div>
           <button type="submit" class="submit-btn">Aggiungi Articolo</button>
         </div>
       </form>
@@ -21,6 +33,9 @@
           <div class="article-content">
             <h3>{{ a.title }}</h3>
             <p>{{ a.content.substring(0, 100) }}...</p>
+            <div class="article-tags">
+              <span v-for="tag in a.tags" :key="tag" class="tag">{{ tag }}</span>
+            </div>
             <div class="article-actions">
               <button @click="editArticle(a)" class="edit-btn">Modifica</button>
               <button @click="removeArticle(a.id)" class="delete-btn">Elimina</button>
@@ -40,11 +55,23 @@ const articles = ref([]);
 const title = ref('');
 const content = ref('');
 const image_url = ref('');
+const selectedTags = ref([]);
 const router = useRouter();
+
+const availableTags = ['WW2', 'Historical Figure', 'Event'];
 
 async function loadArticles() {
   const res = await fetch('http://localhost/backend-app/api/articles.php');
   articles.value = await res.json();
+}
+
+function toggleTag(tag) {
+  const index = selectedTags.value.indexOf(tag);
+  if (index === -1) {
+    selectedTags.value.push(tag);
+  } else {
+    selectedTags.value.splice(index, 1);
+  }
 }
 
 async function addArticle() {
@@ -54,12 +81,14 @@ async function addArticle() {
     body: JSON.stringify({
       title: title.value,
       content: content.value,
-      image_url: image_url.value
+      image_url: image_url.value,
+      tags: selectedTags.value
     })
   });
   title.value = '';
   content.value = '';
   image_url.value = '';
+  selectedTags.value = [];
   await loadArticles();
 }
 
@@ -215,5 +244,47 @@ textarea {
 
 .delete-btn:hover {
   background: #d91313;
+}
+.tags-input {
+  margin: 1rem 0;
+}
+
+.available-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tag {
+  background-color: #f0f2f2;
+  color: #232f3e;
+  padding: 0.4rem 1rem;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tag:hover {
+  background-color: #e3e6e6;
+}
+
+.tag.selected {
+  background-color: #232f3e;
+  color: white;
+}
+
+.article-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.article-tags .tag {
+  font-size: 0.8rem;
+  padding: 0.3rem 0.8rem;
+  cursor: default;
 }
 </style>

@@ -8,6 +8,7 @@
         <input v-model="password" type="password" placeholder="Password" />
         <button @click="login" class="login-btn">Accedi</button>
         <p v-if="error" class="error">{{ error }}</p>
+        <router-link to="/register" class="register-link">Non hai un account? Registrati</router-link>
       </div>
     </div>
   </div>
@@ -115,6 +116,18 @@ input:focus {
   color: #c40000;
   margin-top: 1rem;
   text-align: center;
+}
+
+.register-link {
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+  color: #007185;
+  text-decoration: none;
+}
+
+.register-link:hover {
+  text-decoration: underline;
 }
 </style>
   

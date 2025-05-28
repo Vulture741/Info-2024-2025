@@ -3,6 +3,9 @@
     <img :src="article.image_url" v-if="article.image_url" alt="Article image" />
     <div class="card-content">
       <h3>{{ article.title }}</h3>
+      <div class="tags">
+        <span v-for="tag in article.tags" :key="tag" class="tag">{{ tag }}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -59,6 +62,26 @@ h3 {
 
 .card:hover h3 {
   color: #007185;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+.tag {
+  background-color: #f0f2f2;
+  color: #007185;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.tag:hover {
+  background-color: #e3e6e6;
 }
 </style>
   
